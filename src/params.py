@@ -86,10 +86,15 @@ eta: float = 2.0        # path-loss exponent
 # =========================================================
 # 5) POWER BUDGET
 # =========================================================
-# Total power budget adapted from 1 W paper setting
-Ptot: float = 1.0       # W
-Pp_max: float = 0.5     # W
-Ps_max: float = 0.5     # W
+# Per-user power budgets for the current comparison setting.
+Pp_max: float = 2.0     # W
+Ps_max: float = 2.0     # W, total SU budget: Psc + Psp <= Ps_max
+
+# Non-optimized baseline power vector in the requested order:
+# P = (Psc, Pp, Psp)
+Psc_nonopt: float = 1.5
+Pp_nonopt: float = 2.0
+Psp_nonopt: float = 0.5
 
 # =========================================================
 # 6) SIMULATION GRID
@@ -111,9 +116,9 @@ PSNR_s_min: float = 34.0  # dB
 # =========================================================
 # 8) OBJECTIVE WEIGHTS
 # =========================================================
-# Since PU must be protected, we prioritize PU slightly more
-w_p: float = 0.6
-w_s: float = 0.4
+# Since PU must be protected, we prioritize PU more strongly.
+w_p: float = 0.7
+w_s: float = 0.3
 
 # =========================================================
 # 9) RATE-PSNR FITTING PARAMETERS
@@ -132,7 +137,7 @@ beta_s: float = 0.0
 # =========================================================
 # 10) SOLVER SETTINGS
 # =========================================================
-USE_SCA_SOLVER: bool = True   # start with grid sanity-check
+USE_SCA_SOLVER: bool = False
 GRID_POINTS_PU: int = 10
 GRID_POINTS_SU: int = 11
 
@@ -148,9 +153,9 @@ P_ref: float = 1.0  # W
 # =========================================================
 # 12) SVC-AWARE QoE SETTINGS
 # =========================================================
-# Thesis-specific QoE design:
-# QoE_s = PSNR_s + lambda_layer * (layers_s / 4)
-USE_SVC_AWARE_QOE: bool = True
+# Current comparison setting:
+# QoE_s = PSNR_s
+USE_SVC_AWARE_QOE: bool = False
 
 # Reward for activating more SVC layers
 lambda_layer: float = 4.0
@@ -169,7 +174,11 @@ def print_parameter_summary() -> None:
     print(f"B (Hz)                 : {B}")
     print(f"AMC (c1, c2)           : ({c1}, {c2})")
     print(f"Path-loss exponent     : {eta}")
-    print(f"Power budgets (W)      : Ptot={Ptot}, Pp_max={Pp_max}, Ps_max={Ps_max}")
+    print(f"Power budgets (W)      : Pp_max={Pp_max}, Ps_max={Ps_max}")
+    print(
+        "Non-opt baseline (W)   : "
+        f"Psc={Psc_nonopt}, Pp={Pp_nonopt}, Psp={Psp_nonopt}"
+    )
     print(f"SNR grid (dB)          : {SNR_dB_list}")
     print(f"Monte Carlo runs       : {N_MC}")
     print(f"PU min rate (bps)      : {Rp_min}")
