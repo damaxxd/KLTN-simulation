@@ -29,9 +29,6 @@ import numpy as np
 
 from params import (
     w_p, w_s,
-    USE_SVC_AWARE_QOE,
-    lambda_layer, lambda_rate,
-    svc_cum,
 )
 
 # =========================================================
@@ -87,23 +84,11 @@ def qoe_su_from_psnr_layers(
     max_layers: int = 4,
 ) -> float:
     """
-    Thesis-specific SVC-aware QoE:
-
+    Current comparison setting:
         QoE_s = PSNR_s
-                + lambda_layer * (layers_s / max_layers)
-                + lambda_rate  * (Reff_s / R_max)
-
-    For the current stage:
-        lambda_rate = 0 by default
     """
-    if not USE_SVC_AWARE_QOE:
-        return float(PSNR_s)
-
-    R_max = float(svc_cum[-1])
-    layer_bonus = lambda_layer * (float(layers_s) / float(max_layers))
-    rate_bonus = lambda_rate * (float(Reff_s) / max(R_max, 1e-9))
-
-    return float(PSNR_s) + layer_bonus + rate_bonus
+    _ = (layers_s, Reff_s, max_layers)
+    return float(PSNR_s)
 
 
 def qoe_system(QoE_p: float, QoE_s: float) -> float:

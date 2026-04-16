@@ -22,7 +22,6 @@ from __future__ import annotations
 from params import print_parameter_summary, USE_SCA_SOLVER
 from channel import sigma2_from_snr_db, sample_pu_su_gains
 from power_solver_grid import solve_power_grid
-from power_solver_sca import solve_power_sca
 
 
 def run_sanity_check(snr_db: float = 10.0, d_pu: float = 1.2, d_su: float = 1.0) -> None:
@@ -38,6 +37,7 @@ def run_sanity_check(snr_db: float = 10.0, d_pu: float = 1.2, d_su: float = 1.0)
     print(f"gs          : {gs:.6f}")
 
     if USE_SCA_SOLVER:
+        from power_solver_sca import solve_power_sca
         sol = solve_power_sca(gp=gp, gs=gs, sigma2=sigma2)
         solver_name = "SCA"
     else:
